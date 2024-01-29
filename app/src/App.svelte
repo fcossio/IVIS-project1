@@ -65,6 +65,9 @@
   <p style="text-align:justify; margin-top:1em">
     This app is empowering <b>The Free Team Market</b> by ensuring that you have the information to build your team.
     Potential teammates are sorted in order to complement to your team's weakest skill.
+    <br/>
+    From an information visualization perspective this app optimizes the ink to information ratio by showing only the most relevant data at each step of the team building process.
+    Area is used to encode skill levels. Colors are used to encode the need for a skill or the teammate that contributes this area in the team stats.
   </p>
   {#if ready}
     <TeamSelectBar data={data} aliases={data.map(d => d.alias)} bind:selectedAliases={selectedAliases} aliasScores={aliasScores} skillOrder={skillOrder}/>
