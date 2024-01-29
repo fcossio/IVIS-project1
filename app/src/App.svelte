@@ -8,15 +8,14 @@
   let data = []
   
   let selectedAliases = [];
-  let aliasScores = [];
+  let aliasScores = {};
 
   onMount(async () => {
     data = await d3.csv('data.csv');
     ready = true;
-    console.log(data)
     // Extract skills data only for barplot
   });
-  let skills = ["Collab", "Comm", "Eval", "HCI", "Graph", "Graph", "Code", "UI", "Art", "Math", "Stats", "Viz"]
+  let skills = ["Collab", "Comm", "Eval", "HCI", "Graph", "Code", "UI", "Art", "Math", "Stats", "Viz"]
   $: skillsData = updateSkillData(selectedAliases);
 
   let updateSkillData = (selectedAliases) => {
@@ -37,30 +36,38 @@
     return skillsData;
   };
 
-  let updateAliasScores = skillsData => {
-    aliasScores = [];
-    let factors = skillsData.map(d => d.total);
-    console.log(factors)
-    let sum = factors.reduce((a, b) => a + b, 0);
-    factors = factors.map(d => 1 - d/sum);
+  let skillOrder = ["Code", "Collab", "Comm", "Eval", "HCI", "Graph", "UI", "Art", "Math", "Stats", "Viz"]
+  let updateSkillOrder = (skillsData) => {
+    skillOrder = skillsData.sort((a, b) => b.total - a.total).map(d => d.skill).reverse();
+    return skillOrder;
+  };
+
+  $: skillOrder = updateSkillOrder(skillsData);
+
+  // sort by first skill
+
+  let updateAliasScores = (skillOrder,skillsData) => {
+    let aliasScores = {};
+    const lowestSkill = skillOrder[0]
     data.forEach(d => {
-      let score = 0;
-      skills.forEach(skill => {
-        score += parseInt(d[`skill${skill}`]) * factors[skills.indexOf(skill)];
-      });
-      aliasScores.push(score);
-  })
-  console.log(aliasScores);
-  return aliasScores;};
-  $: aliasScores = updateAliasScores(skillsData);
+      aliasScores[d.alias] = parseInt(d[`skill${lowestSkill}`]);
+    });
+    return aliasScores;
+  };
+
+  $: aliasScores = updateAliasScores(skillOrder,skillsData);
   
 
 </script>
 
 <main>
   <h1>IVIS Dream Team</h1>
+  <p style="text-align:justify; margin-top:1em">
+    This app is empowering <b>The Free Team Market</b> by ensuring that you have the information to build your team.
+    Potential teammates are sorted in order to complement to your team's weakest skill.
+  </p>
   {#if ready}
-    <TeamSelectBar aliases={data.map(d => d.alias)} bind:selectedAliases={selectedAliases} aliasScores={aliasScores}/>
+    <TeamSelectBar data={data} aliases={data.map(d => d.alias)} bind:selectedAliases={selectedAliases} aliasScores={aliasScores} skillOrder={skillOrder}/>
     {#if (selectedAliases.length > 0)}
       <RadialStackedBar data={skillsData} />
     

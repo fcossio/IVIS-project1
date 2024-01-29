@@ -12,8 +12,8 @@
     const sorted = false; // whether to sort the data by descending total
     const varFontSize = 16; // font size of chart text, in pixels
     const tickColor = '#000'; // color of inner radius ticks
-    const ringColor = '#000'; // color of scale rings
-    const scaleColor = '#000'; // color of scale text
+    const ringColor = '#f3f1ec'; // color of scale rings
+    const scaleColor = '##f3f1ec'; // color of scale text
     const scaleStroke = '#fff'; // color of scale text background/stroke
     const rectLength = 18; // width of  color legend key, in pixels
     const height = width;
@@ -96,7 +96,7 @@
       {/each}
     </g>
     <g class="y-axis" text-anchor="end">
-      <text x="0" y={-yScale(yScale.ticks(10).pop())} dy="-2em">Score</text>
+
       {#each yScale.ticks(10).slice(1) as ydata}
         <g fill="none">
           <circle stroke={ringColor} stroke-opacity="0.5" r={yScale(ydata)} />
@@ -114,7 +114,7 @@
             dy="0.35em"
             stroke="none"
             stroke-width="5"
-            fill={scaleColor}>{ydata}</text
+            fill={tickColor}>{ydata}</text
           >
         </g>
       {/each}
@@ -123,6 +123,7 @@
       {#each keys.slice(1).reverse() as lData, i}
         <g transform="translate(-70,{(i - (keys.length - 1) / 2) * 20-60})">
           <rect width={rectLength} height="18" fill={zScale(lData)} />
+          <text x="24" y="9" dy="0.35em" stroke={scaleStroke} stroke-width="5" fill={scaleColor}>{lData}</text>
           <text x="24" y="9" dy="0.35em">{lData}</text>
         </g>
       {/each}
